@@ -1,0 +1,23 @@
+"""
+基础配置文件，包含所有API和服务的配置信息
+"""
+
+# OpenAI API配置
+OPENAI_CONFIG = {
+    "api_key": "api_key",
+    "base_url": "https://api.gpt.ge/v1/",
+    "model": "gpt-4o-mini"
+}
+
+# Anthropic API配置
+ANTHROPIC_CONFIG = {
+    "api_key": "api_key",
+    "base_url": "https://api.gpt.ge",
+    "model": "claude-3-5-sonnet-20241022"
+}
+
+# 通用API设置
+API_SETTINGS = {
+    "openai": OPENAI_CONFIG,
+    "anthropic": ANTHROPIC_CONFIG
+}

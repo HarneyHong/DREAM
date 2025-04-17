@@ -1,0 +1,18 @@
+services:
+  - name: test_mcp_server
+    server_type: stdio
+    params:
+      command: python
+      args:
+        - mcp_server.py
+      cwd: .
+
+  - name: Postgres
+    server_type: stdio
+    params:
+      command: npx
+      args:
+        - -y
+        - "@modelcontextprotocol/server-postgres"
+        - "postgresql://postgres:postgres@localhost:5432/postgres"
+      cwd: .

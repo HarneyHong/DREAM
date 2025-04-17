@@ -1,0 +1,7 @@
+# Ignore Python bytecode cache directories
+__pycache__/
+**/__pycache__/
+diagnostic_results/**
+# Ignore pytest cache directory
+.pytest_cache/
+config/base_config.py
