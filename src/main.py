@@ -39,8 +39,6 @@ def read_slow_queries(file_path: str) -> List[Dict[str, Any]]:
     df = pd.read_csv(file_path)
     queries = []
     for _, row in df.iterrows():
-        # 修改
-        # plan_dict = convert_plan_to_dict(row["plan_json"])
         plan_dict = row["plan_json"]
         query_info = {
             "query_id": row.get("query_id", f"{len(queries)}"),
@@ -118,13 +116,11 @@ async def process_slow_query(agent: DBAgent, query: Dict[str, Any], path: str):
 
     # 为每个查询创建诊断工单和异常信息
     anomaly_info, ticket_file = create_diagnostic_ticket(query, path)
+    result = None
     
     # 诊断和修复
-    try:
-        # result = await agent.diagnose_and_repair(query, anomaly_info)
-        result = "success"
-    except Exception as e:
-        logger.error(f"处理查询 {query['query_id']} 时出错: {str(e)}")
+    result = await agent.diagnose_and_repair(query, anomaly_info)
+    # result = "success"
     
     return result, ticket_file
 

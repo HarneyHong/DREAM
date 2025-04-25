@@ -4,4 +4,6 @@ __pycache__/
 diagnostic_results/**
 # Ignore pytest cache directory
 .pytest_cache/
+src/agent/plan/model_res/**
 config/base_config.py
+src/agent/plan/RCRank/bert-base-uncased/**

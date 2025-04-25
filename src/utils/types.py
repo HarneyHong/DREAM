@@ -6,9 +6,10 @@ from datetime import datetime
 class QueryInfo:
     query_id: int
     query: str
-    query_plan: Dict[str, Any]
-    query_kpis: Dict[str, List[float]]
-    log_all: Dict[str, Any]
+    query_plan: str
+    # query_plan: Dict[str, Any]
+    query_kpis: List[List[float]]
+    log_all: List[float]
     execution_time: float
 
 @dataclass

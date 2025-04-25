@@ -27,3 +27,5 @@ smithery>=0.1.0
 nest-asyncio>=1.5.0
 pyyaml>=6.0.0 
 openai-agents
+torch
+transformers

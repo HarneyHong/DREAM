@@ -143,6 +143,7 @@ class ActionManager:
         self.agent = Agent(
             name="DBDiagnosticAgent",
             model="gpt-4o-mini",
+            #o3-mini,o4-mini,4.1
             instructions=self._get_agent_instructions(),
             mcp_servers=self._servers,
         )
@@ -150,10 +151,18 @@ class ActionManager:
 
     def _get_agent_instructions(self) -> str:
         return """
-            You are a database diagnostic expert, proficient in analyzing database performance issues and providing repair suggestions. 
+            As a database performance expert, I specialize in identifying slow query root causes through structured methods. 
+            Adhering to a "Minimal Tools" approach,
+            I use 1-2 key diagnostics (e.g., execution plan analysis, index/statistics checks) for precise analysis while avoiding redundant tools.
+            Solutions include actionable SQL commands (e.g., index optimization queries, statistics updates) with clear technical rationales. 
+            My framework enables teams to:
+                - Diagnose: Reveal bottlenecks via targeted profiling
+                - Execute: Apply proven SQL fixes
+                - Learn: Document optimization patterns and tradeoffs
+            This end-to-end methodology converts quick fixes into lasting optimization strategies.
         """
 
-    async def analyze_and_act(self, root_causes: List[str], 
+    async def analyze_and_act(self, root_cause: Dict[str, Any], 
                             query_info: QueryInfo,
                             anomaly_info: AnomalyInfo,
                             historical_data: List[Dict]) -> Dict[str, Any]:
@@ -161,12 +170,14 @@ class ActionManager:
         if not self.agent:
             await self.initialize()
         
-        prompt = self._build_prompt(root_causes, query_info, anomaly_info, historical_data)
+        prompt = self._build_prompt(root_cause, query_info, anomaly_info, historical_data)
+        # print(f"prompt:\n{prompt}")
         result = await Runner.run(starting_agent=self.agent, input=prompt)
+        print(f"query:\n{query_info.query}")
         print(f"result output:\n{result.final_output}")
         return {"diagnosis": result.final_output}
 
-    def _build_prompt(self, root_causes: List[str], query_info: QueryInfo, 
+    def _build_prompt(self, root_cause: Dict[str, Any], query_info: QueryInfo, 
                       anomaly_info: AnomalyInfo, historical_data: List[Dict]) -> str:
         """构建提示信息"""
         
@@ -177,7 +188,7 @@ class ActionManager:
         1. Query Information:
         - SQL: {query_info.query}
         - Query Plan: {query_info.query_plan}
-        - Execution Time: {query_info.execution_time} seconds
+        - Execution Time: {query_info.execution_time} milliseconds
         
         2. Running Environment Monitoring:
         - CPU Usage: {anomaly_info.kpis['cpu_usage']}, {anomaly_info.kpi_descriptions['cpu_usage']}
@@ -186,15 +197,9 @@ class ActionManager:
         - Network Traffic: {anomaly_info.kpis['network_traffic']}, {anomaly_info.kpi_descriptions['network_traffic']}
         
         
-        Now the root cause of the issue is identified as follows: {root_causes}, now you need to analyze the root cause and provide repair suggestions:
-        1. Analyze the root cause and provide repair suggestions
-        2. Provide query rewriting suggestions
-        3. Suggest configuration adjustments
-        4. Suggest index optimizations
-        5. Suggest hardware upgrades
-        6. Suggest software upgrades
-        7. Suggest other suggestions
+        The top root cause of the issue is identified as follows: {root_cause['root_cause']}.
         
+        Now you need to analyze the root cause and provide repair suggestions.
         
         Some Reference Similar Historical Data that may help you:
         {historical_data}
